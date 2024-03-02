@@ -1,6 +1,6 @@
 import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
-import { UUIDType } from './uuid.js';
 import { GraphQLContext } from './main.js';
+import { UUIDType } from './uuid.js';
 
 export interface IPost {
   id: string;

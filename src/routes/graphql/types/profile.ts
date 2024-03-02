@@ -1,6 +1,6 @@
 import { GraphQLBoolean, GraphQLInt, GraphQLNonNull, GraphQLObjectType } from 'graphql';
-import { UUIDType } from './uuid.js';
 import { GraphQLContext } from './main.js';
+import { UUIDType } from './uuid.js';
 
 export interface IProfile {
   id: string;

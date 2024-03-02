@@ -1,5 +1,5 @@
+import { GraphQLFieldResolver } from 'graphql';
 import { GraphQLContext } from '../types/main.js';
-import { GraphQLFieldResolver } from 'graphql/type/index.js';
 
 export const getAllPosts: GraphQLFieldResolver<undefined, GraphQLContext, object> = (
   _,
