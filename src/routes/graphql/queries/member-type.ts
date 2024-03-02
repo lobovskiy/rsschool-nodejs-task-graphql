@@ -5,7 +5,7 @@ import { getAllMemberTypes, getMemberType } from '../resolvers/member-type.js';
 
 const MemberTypesQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   description: 'Get all member types',
-  type: new GraphQLList(MemberTypeType),
+  type: new GraphQLList(new GraphQLNonNull(MemberTypeType)),
   resolve: getAllMemberTypes,
 };
 

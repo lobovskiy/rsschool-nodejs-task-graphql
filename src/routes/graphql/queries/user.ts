@@ -6,7 +6,7 @@ import { getAllUsers, getUser } from '../resolvers/user.js';
 
 const UsersQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   description: 'Get all users',
-  type: new GraphQLList(UserType),
+  type: new GraphQLList(new GraphQLNonNull(UserType)),
   resolve: getAllUsers,
 };
 

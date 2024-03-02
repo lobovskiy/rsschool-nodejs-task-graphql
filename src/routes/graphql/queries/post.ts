@@ -6,7 +6,7 @@ import { getAllPosts, getPost } from '../resolvers/post.js';
 
 const PostsQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   description: 'Get all posts',
-  type: new GraphQLList(PostType),
+  type: new GraphQLList(new GraphQLNonNull(PostType)),
   resolve: getAllPosts,
 };
 

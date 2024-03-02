@@ -6,7 +6,7 @@ import { getAllProfiles, getProfile } from '../resolvers/profile.js';
 
 const ProfilesQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   description: 'Get all profiles',
-  type: new GraphQLList(ProfileType),
+  type: new GraphQLList(new GraphQLNonNull(ProfileType)),
   resolve: getAllProfiles,
 };
 

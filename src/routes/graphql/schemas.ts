@@ -1,6 +1,5 @@
 import { Type } from '@fastify/type-provider-typebox';
-import { GraphQLObjectType, GraphQLObjectTypeConfig, GraphQLSchema } from 'graphql';
-import { GraphQLContext } from './types/main.js';
+import { GraphQLObjectType, GraphQLSchema } from 'graphql';
 import { MemberTypeQuery, MemberTypesQuery } from './queries/member-type.js';
 import { PostQuery, PostsQuery } from './queries/post.js';
 import { UserQuery, UsersQuery } from './queries/user.js';
@@ -25,7 +24,7 @@ export const createGqlResponseSchema = {
   ),
 };
 
-const queryConfig: GraphQLObjectTypeConfig<undefined, GraphQLContext> = {
+const query = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
     memberTypes: MemberTypesQuery,
@@ -37,7 +36,6 @@ const queryConfig: GraphQLObjectTypeConfig<undefined, GraphQLContext> = {
     profiles: ProfilesQuery,
     profile: ProfileQuery,
   }),
-};
-const query = new GraphQLObjectType(queryConfig);
+});
 
 export const schema = new GraphQLSchema({ query });
