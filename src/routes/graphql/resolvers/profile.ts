@@ -1,7 +1,7 @@
 import { GraphQLContext } from '../types/main.js';
 import { GraphQLFieldResolver } from 'graphql/type/index.js';
 
-export const getProfiles: GraphQLFieldResolver<undefined, GraphQLContext, object> = (
+export const getAllProfiles: GraphQLFieldResolver<undefined, GraphQLContext, object> = (
   _,
   __,
   { prisma },
