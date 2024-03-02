@@ -8,6 +8,8 @@ export interface IPost {
   content: string;
 }
 
+export type PostArgs = Pick<IPost, 'id'>;
+
 export const PostType = new GraphQLObjectType<IPost, GraphQLContext>({
   name: 'Post',
   fields: () => ({

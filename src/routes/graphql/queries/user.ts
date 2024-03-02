@@ -1,7 +1,8 @@
-import { GraphQLFieldConfig, GraphQLList } from 'graphql';
+import { GraphQLFieldConfig, GraphQLList, GraphQLNonNull } from 'graphql';
 import { GraphQLContext } from '../types/main.js';
+import { UUIDType } from '../types/uuid.js';
 import { UserType } from '../types/user.js';
-import { getAllUsers } from '../resolvers/user.js';
+import { getAllUsers, getUser } from '../resolvers/user.js';
 
 const UsersQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   description: 'Get all users',
@@ -9,4 +10,13 @@ const UsersQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   resolve: getAllUsers,
 };
 
-export { UsersQuery };
+const UserQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
+  description: 'Get user by id',
+  type: UserType,
+  args: {
+    id: { type: new GraphQLNonNull(UUIDType) },
+  },
+  resolve: getUser,
+};
+
+export { UsersQuery, UserQuery };

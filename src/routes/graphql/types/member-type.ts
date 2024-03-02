@@ -18,6 +18,8 @@ export interface IMemberType {
   postsLimitPerMonth: number;
 }
 
+export type MemberTypeArgs = Pick<IMemberType, 'id'>;
+
 export const MemberTypeIdType = new GraphQLEnumType({
   name: 'MemberTypeId',
   values: {
@@ -33,7 +35,7 @@ export const MemberTypeIdType = new GraphQLEnumType({
 export const MemberTypeType = new GraphQLObjectType<IMemberType, GraphQLContext>({
   name: 'MemberType',
   fields: () => ({
-    id: { type: MemberTypeIdType },
+    id: { type: new GraphQLNonNull(MemberTypeIdType) },
     discount: { type: new GraphQLNonNull(GraphQLFloat) },
     postsLimitPerMonth: { type: new GraphQLNonNull(GraphQLInt) },
   }),

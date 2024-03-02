@@ -1,7 +1,8 @@
-import { GraphQLFieldConfig, GraphQLList } from 'graphql';
+import { GraphQLFieldConfig, GraphQLList, GraphQLNonNull } from 'graphql';
 import { GraphQLContext } from '../types/main.js';
+import { UUIDType } from '../types/uuid.js';
 import { PostType } from '../types/post.js';
-import { getAllPosts } from '../resolvers/post.js';
+import { getAllPosts, getPost } from '../resolvers/post.js';
 
 const PostsQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   description: 'Get all posts',
@@ -9,4 +10,13 @@ const PostsQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   resolve: getAllPosts,
 };
 
-export { PostsQuery };
+const PostQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
+  description: 'Get post by id',
+  type: PostType,
+  args: {
+    id: { type: new GraphQLNonNull(UUIDType) },
+  },
+  resolve: getPost,
+};
+
+export { PostsQuery, PostQuery };

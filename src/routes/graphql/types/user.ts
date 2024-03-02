@@ -8,6 +8,8 @@ export interface IUser {
   balance: number;
 }
 
+export type UserArgs = Pick<IUser, 'id'>;
+
 export const UserType = new GraphQLObjectType<IUser, GraphQLContext>({
   name: 'User',
   fields: () => ({

@@ -8,6 +8,8 @@ export interface IProfile {
   yearOfBirth: number;
 }
 
+export type ProfileArgs = Pick<IProfile, 'id'>;
+
 export const ProfileType = new GraphQLObjectType<IProfile, GraphQLContext>({
   name: 'Profile',
   fields: () => ({
