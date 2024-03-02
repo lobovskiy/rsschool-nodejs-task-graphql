@@ -1,21 +1,28 @@
 import { GraphQLFieldConfig, GraphQLList, GraphQLNonNull } from 'graphql';
 import { GraphQLContext } from '../types/main.js';
-import { MemberTypeIdType, MemberTypeType } from '../types/member-type.js';
-import { getAllMemberTypes, getMemberType } from '../resolvers/member-type.js';
+import {
+  MemberTypeArgs,
+  MemberTypeIdType,
+  MemberTypeType,
+} from '../types/member-type.js';
 
 const MemberTypesQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   description: 'Get all member types',
   type: new GraphQLList(new GraphQLNonNull(MemberTypeType)),
-  resolve: getAllMemberTypes,
+  resolve: (_, __, { prisma }) => {
+    return prisma.memberType.findMany();
+  },
 };
 
-const MemberTypeQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
+const MemberTypeQuery: GraphQLFieldConfig<undefined, GraphQLContext, MemberTypeArgs> = {
   description: 'Get member type by id',
   type: MemberTypeType,
   args: {
     id: { type: new GraphQLNonNull(MemberTypeIdType) },
   },
-  resolve: getMemberType,
+  resolve: (_, { id }, { prisma }) => {
+    return prisma.memberType.findUnique({ where: { id } });
+  },
 };
 
 export { MemberTypesQuery, MemberTypeQuery };

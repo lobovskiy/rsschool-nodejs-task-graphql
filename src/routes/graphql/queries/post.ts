@@ -1,22 +1,25 @@
 import { GraphQLFieldConfig, GraphQLList, GraphQLNonNull } from 'graphql';
 import { GraphQLContext } from '../types/main.js';
 import { UUIDType } from '../types/uuid.js';
-import { PostType } from '../types/post.js';
-import { getAllPosts, getPost } from '../resolvers/post.js';
+import { PostArgs, PostType } from '../types/post.js';
 
 const PostsQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   description: 'Get all posts',
   type: new GraphQLList(new GraphQLNonNull(PostType)),
-  resolve: getAllPosts,
+  resolve: (_, __, { prisma }) => {
+    return prisma.post.findMany();
+  },
 };
 
-const PostQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
+const PostQuery: GraphQLFieldConfig<undefined, GraphQLContext, PostArgs> = {
   description: 'Get post by id',
   type: PostType,
   args: {
     id: { type: new GraphQLNonNull(UUIDType) },
   },
-  resolve: getPost,
+  resolve: (_, { id }, { prisma }) => {
+    return prisma.post.findUnique({ where: { id } });
+  },
 };
 
 export { PostsQuery, PostQuery };
