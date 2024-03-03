@@ -1,10 +1,7 @@
 import { GraphQLFieldConfig, GraphQLList, GraphQLNonNull } from 'graphql';
 import { GraphQLContext } from '../types/main.js';
-import {
-  MemberTypeArgs,
-  MemberTypeIdType,
-  MemberTypeType,
-} from '../types/member-type.js';
+import { MemberTypeIdType } from '../types/member-type-id.js';
+import { MemberTypeArgs, MemberTypeType } from '../types/member-type.js';
 
 const MemberTypesQuery: GraphQLFieldConfig<undefined, GraphQLContext> = {
   description: 'Get all member types',

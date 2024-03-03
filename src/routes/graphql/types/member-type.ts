@@ -1,5 +1,4 @@
 import {
-  GraphQLEnumType,
   GraphQLFloat,
   GraphQLInt,
   GraphQLList,
@@ -8,11 +7,7 @@ import {
 } from 'graphql';
 import { GraphQLContext } from './main.js';
 import { ProfileType } from './profile.js';
-
-export enum MemberTypeId {
-  BASIC = 'basic',
-  BUSINESS = 'business',
-}
+import { MemberTypeId, MemberTypeIdType } from './member-type-id.js';
 
 export interface IMemberType {
   id: MemberTypeId;
@@ -21,18 +16,6 @@ export interface IMemberType {
 }
 
 export type MemberTypeArgs = Pick<IMemberType, 'id'>;
-
-export const MemberTypeIdType = new GraphQLEnumType({
-  name: 'MemberTypeId',
-  values: {
-    [MemberTypeId.BASIC]: {
-      value: MemberTypeId.BASIC,
-    },
-    [MemberTypeId.BUSINESS]: {
-      value: MemberTypeId.BUSINESS,
-    },
-  },
-});
 
 export const MemberTypeType: GraphQLObjectType<IMemberType, GraphQLContext> =
   new GraphQLObjectType<IMemberType, GraphQLContext>({

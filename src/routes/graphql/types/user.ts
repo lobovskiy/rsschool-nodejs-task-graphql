@@ -9,6 +9,7 @@ import { GraphQLContext } from './main.js';
 import { UUIDType } from './uuid.js';
 import { ProfileType } from './profile.js';
 import { PostType } from './post.js';
+import { GraphQLInputObjectType } from 'graphql/index.js';
 
 export interface ISubscription {
   subscriberId: string;
@@ -24,6 +25,9 @@ export interface IUser {
 }
 
 export type UserArgs = Pick<IUser, 'id'>;
+export type CreateUserArgs = {
+  dto: Pick<IUser, 'name' | 'balance'>;
+};
 
 export const UserType: GraphQLObjectType<IUser, GraphQLContext> = new GraphQLObjectType<
   IUser,
@@ -59,4 +63,12 @@ export const UserType: GraphQLObjectType<IUser, GraphQLContext> = new GraphQLObj
         }),
     },
   }),
+});
+
+export const CreateUserInputType = new GraphQLInputObjectType({
+  name: 'CreateUserInput',
+  fields: {
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    balance: { type: new GraphQLNonNull(GraphQLFloat) },
+  },
 });
