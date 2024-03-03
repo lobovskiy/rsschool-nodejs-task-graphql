@@ -23,6 +23,9 @@ export type ProfileArgs = Pick<IProfile, 'id'>;
 export type CreateProfileArgs = {
   dto: Pick<IProfile, 'userId' | 'memberTypeId' | 'isMale' | 'yearOfBirth'>;
 };
+export type ChangeProfileArgs = Pick<IProfile, 'id'> & {
+  dto: Pick<IProfile, 'userId' | 'memberTypeId' | 'isMale' | 'yearOfBirth'>;
+};
 
 export const ProfileType = new GraphQLObjectType<IProfile, GraphQLContext>({
   name: 'Profile',
@@ -50,5 +53,14 @@ export const CreateProfileInputType = new GraphQLInputObjectType({
     memberTypeId: { type: new GraphQLNonNull(MemberTypeIdType) },
     isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
     yearOfBirth: { type: new GraphQLNonNull(GraphQLInt) },
+  },
+});
+
+export const ChangeProfileInputType = new GraphQLInputObjectType({
+  name: 'ChangeProfileInput',
+  fields: {
+    memberTypeId: { type: MemberTypeIdType },
+    isMale: { type: GraphQLBoolean },
+    yearOfBirth: { type: GraphQLInt },
   },
 });

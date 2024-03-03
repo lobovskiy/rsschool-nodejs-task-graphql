@@ -2,6 +2,8 @@ import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 import { GraphQLContext } from '../types/main.js';
 import { UUIDType } from '../types/uuid.js';
 import {
+  ChangeUserArgs,
+  ChangeUserInputType,
   CreateUserArgs,
   CreateUserInputType,
   UserArgs,
@@ -17,6 +19,26 @@ const CreateUserMutation: GraphQLFieldConfig<undefined, GraphQLContext, CreateUs
     },
     resolve: (_, { dto }, { prisma }) => {
       return prisma.user.create({ data: dto });
+    },
+  };
+
+const ChangeUserMutation: GraphQLFieldConfig<undefined, GraphQLContext, ChangeUserArgs> =
+  {
+    description: 'Change existing user',
+    type: UserType,
+    args: {
+      id: { type: new GraphQLNonNull(UUIDType) },
+      dto: { type: new GraphQLNonNull(ChangeUserInputType) },
+    },
+    resolve: async (_, { id, dto }, { prisma }) => {
+      try {
+        return await prisma.user.update({
+          where: { id },
+          data: dto,
+        });
+      } catch {
+        return null;
+      }
     },
   };
 
@@ -37,4 +59,4 @@ const DeleteUserMutation: GraphQLFieldConfig<undefined, GraphQLContext, UserArgs
   },
 };
 
-export { CreateUserMutation, DeleteUserMutation };
+export { CreateUserMutation, ChangeUserMutation, DeleteUserMutation };

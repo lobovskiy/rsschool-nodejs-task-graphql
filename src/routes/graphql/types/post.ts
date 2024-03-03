@@ -19,6 +19,9 @@ export type PostArgs = Pick<IPost, 'id'>;
 export type CreatePostArgs = {
   dto: Pick<IPost, 'authorId' | 'content' | 'title'>;
 };
+export type ChangePostArgs = Pick<IPost, 'id'> & {
+  dto: Pick<IPost, 'authorId' | 'content' | 'title'>;
+};
 
 export const PostType = new GraphQLObjectType<IPost, GraphQLContext>({
   name: 'Post',
@@ -40,5 +43,13 @@ export const CreatePostInputType = new GraphQLInputObjectType({
     authorId: { type: new GraphQLNonNull(UUIDType) },
     content: { type: new GraphQLNonNull(GraphQLString) },
     title: { type: new GraphQLNonNull(GraphQLString) },
+  },
+});
+
+export const ChangePostInputType = new GraphQLInputObjectType({
+  name: 'ChangePostInput',
+  fields: {
+    content: { type: GraphQLString },
+    title: { type: GraphQLString },
   },
 });

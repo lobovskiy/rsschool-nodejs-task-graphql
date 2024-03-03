@@ -2,6 +2,8 @@ import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
 import { GraphQLContext } from '../types/main.js';
 import { UUIDType } from '../types/uuid.js';
 import {
+  ChangePostArgs,
+  ChangePostInputType,
   CreatePostArgs,
   CreatePostInputType,
   PostArgs,
@@ -17,6 +19,23 @@ const CreatePostMutation: GraphQLFieldConfig<undefined, GraphQLContext, CreatePo
     },
     resolve: (_, { dto }, { prisma }) => {
       return prisma.post.create({ data: dto });
+    },
+  };
+
+const ChangePostMutation: GraphQLFieldConfig<undefined, GraphQLContext, ChangePostArgs> =
+  {
+    description: 'Change existing post',
+    type: PostType,
+    args: {
+      id: { type: new GraphQLNonNull(UUIDType) },
+      dto: { type: new GraphQLNonNull(ChangePostInputType) },
+    },
+    resolve: async (_, { id, dto }, { prisma }) => {
+      try {
+        return await prisma.post.update({ where: { id }, data: dto });
+      } catch {
+        return null;
+      }
     },
   };
 
@@ -37,4 +56,4 @@ const DeletePostMutation: GraphQLFieldConfig<undefined, GraphQLContext, PostArgs
   },
 };
 
-export { CreatePostMutation, DeletePostMutation };
+export { CreatePostMutation, ChangePostMutation, DeletePostMutation };

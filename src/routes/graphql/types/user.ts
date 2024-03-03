@@ -28,6 +28,9 @@ export type UserArgs = Pick<IUser, 'id'>;
 export type CreateUserArgs = {
   dto: Pick<IUser, 'name' | 'balance'>;
 };
+export type ChangeUserArgs = Pick<IUser, 'id'> & {
+  dto: Partial<Pick<IUser, 'name' | 'balance'>>;
+};
 
 export const UserType: GraphQLObjectType<IUser, GraphQLContext> = new GraphQLObjectType<
   IUser,
@@ -70,5 +73,13 @@ export const CreateUserInputType = new GraphQLInputObjectType({
   fields: {
     name: { type: new GraphQLNonNull(GraphQLString) },
     balance: { type: new GraphQLNonNull(GraphQLFloat) },
+  },
+});
+
+export const ChangeUserInputType = new GraphQLInputObjectType({
+  name: 'ChangeUserInput',
+  fields: {
+    name: { type: GraphQLString },
+    balance: { type: GraphQLFloat },
   },
 });

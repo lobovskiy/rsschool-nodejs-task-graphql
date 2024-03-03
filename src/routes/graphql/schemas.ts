@@ -4,9 +4,21 @@ import { MemberTypeQuery, MemberTypesQuery } from './queries/member-type.js';
 import { PostQuery, PostsQuery } from './queries/post.js';
 import { UserQuery, UsersQuery } from './queries/user.js';
 import { ProfileQuery, ProfilesQuery } from './queries/profile.js';
-import { CreatePostMutation, DeletePostMutation } from './mutations/post.js';
-import { CreateUserMutation, DeleteUserMutation } from './mutations/user.js';
-import { CreateProfileMutation, DeleteProfileMutation } from './mutations/profile.js';
+import {
+  ChangePostMutation,
+  CreatePostMutation,
+  DeletePostMutation,
+} from './mutations/post.js';
+import {
+  ChangeUserMutation,
+  CreateUserMutation,
+  DeleteUserMutation,
+} from './mutations/user.js';
+import {
+  ChangeProfileMutation,
+  CreateProfileMutation,
+  DeleteProfileMutation,
+} from './mutations/profile.js';
 
 export const gqlResponseSchema = Type.Partial(
   Type.Object({
@@ -45,10 +57,13 @@ const mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     createUser: CreateUserMutation,
+    changeUser: ChangeUserMutation,
     deleteUser: DeleteUserMutation,
     createPost: CreatePostMutation,
+    changePost: ChangePostMutation,
     deletePost: DeletePostMutation,
     createProfile: CreateProfileMutation,
+    changeProfile: ChangeProfileMutation,
     deleteProfile: DeleteProfileMutation,
   }),
 });
