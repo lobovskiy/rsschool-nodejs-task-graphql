@@ -36,12 +36,8 @@ const ChangeProfileMutation: GraphQLFieldConfig<
     id: { type: new GraphQLNonNull(UUIDType) },
     dto: { type: new GraphQLNonNull(ChangeProfileInputType) },
   },
-  resolve: async (_, { id, dto }, { prisma }) => {
-    try {
-      return await prisma.profile.update({ where: { id }, data: dto });
-    } catch {
-      return null;
-    }
+  resolve: (_, { id, dto }, { prisma }) => {
+    return prisma.profile.update({ where: { id }, data: dto });
   },
 };
 
@@ -53,13 +49,9 @@ const DeleteProfileMutation: GraphQLFieldConfig<undefined, GraphQLContext, Profi
       id: { type: new GraphQLNonNull(UUIDType) },
     },
     resolve: async (_, { id }, { prisma }) => {
-      try {
-        await prisma.profile.delete({ where: { id } });
+      await prisma.profile.delete({ where: { id } });
 
-        return id;
-      } catch {
-        return null;
-      }
+      return id;
     },
   };
 

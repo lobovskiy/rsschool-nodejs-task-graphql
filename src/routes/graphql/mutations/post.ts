@@ -30,12 +30,8 @@ const ChangePostMutation: GraphQLFieldConfig<undefined, GraphQLContext, ChangePo
       id: { type: new GraphQLNonNull(UUIDType) },
       dto: { type: new GraphQLNonNull(ChangePostInputType) },
     },
-    resolve: async (_, { id, dto }, { prisma }) => {
-      try {
-        return await prisma.post.update({ where: { id }, data: dto });
-      } catch {
-        return null;
-      }
+    resolve: (_, { id, dto }, { prisma }) => {
+      return prisma.post.update({ where: { id }, data: dto });
     },
   };
 
@@ -46,13 +42,9 @@ const DeletePostMutation: GraphQLFieldConfig<undefined, GraphQLContext, PostArgs
     id: { type: new GraphQLNonNull(UUIDType) },
   },
   resolve: async (_, { id }, { prisma }) => {
-    try {
-      await prisma.post.delete({ where: { id } });
+    await prisma.post.delete({ where: { id } });
 
-      return id;
-    } catch {
-      return null;
-    }
+    return id;
   },
 };
 

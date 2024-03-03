@@ -31,15 +31,11 @@ const ChangeUserMutation: GraphQLFieldConfig<undefined, GraphQLContext, ChangeUs
       id: { type: new GraphQLNonNull(UUIDType) },
       dto: { type: new GraphQLNonNull(ChangeUserInputType) },
     },
-    resolve: async (_, { id, dto }, { prisma }) => {
-      try {
-        return await prisma.user.update({
-          where: { id },
-          data: dto,
-        });
-      } catch {
-        return null;
-      }
+    resolve: (_, { id, dto }, { prisma }) => {
+      return prisma.user.update({
+        where: { id },
+        data: dto,
+      });
     },
   };
 
@@ -50,13 +46,9 @@ const DeleteUserMutation: GraphQLFieldConfig<undefined, GraphQLContext, UserArgs
     id: { type: new GraphQLNonNull(UUIDType) },
   },
   resolve: async (_, { id }, { prisma }) => {
-    try {
-      await prisma.user.delete({ where: { id } });
+    await prisma.user.delete({ where: { id } });
 
-      return id;
-    } catch {
-      return null;
-    }
+    return id;
   },
 };
 
