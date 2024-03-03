@@ -1,7 +1,14 @@
-import { GraphQLFloat, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import {
+  GraphQLFloat,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLString,
+} from 'graphql';
 import { GraphQLContext } from './main.js';
 import { UUIDType } from './uuid.js';
 import { ProfileType } from './profile.js';
+import { PostType } from './post.js';
 
 export interface IUser {
   id: string;
@@ -11,7 +18,10 @@ export interface IUser {
 
 export type UserArgs = Pick<IUser, 'id'>;
 
-export const UserType = new GraphQLObjectType<IUser, GraphQLContext>({
+export const UserType: GraphQLObjectType<IUser, GraphQLContext> = new GraphQLObjectType<
+  IUser,
+  GraphQLContext
+>({
   name: 'User',
   fields: () => ({
     id: { type: new GraphQLNonNull(UUIDType) },
@@ -21,6 +31,11 @@ export const UserType = new GraphQLObjectType<IUser, GraphQLContext>({
       type: ProfileType,
       resolve: (user, _, { prisma }) =>
         prisma.profile.findUnique({ where: { userId: user.id } }),
+    },
+    posts: {
+      type: new GraphQLList(new GraphQLNonNull(PostType)),
+      resolve: (user, _, { prisma }) =>
+        prisma.post.findMany({ where: { authorId: user.id } }),
     },
   }),
 });

@@ -2,10 +2,12 @@ import {
   GraphQLEnumType,
   GraphQLFloat,
   GraphQLInt,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
 } from 'graphql';
 import { GraphQLContext } from './main.js';
+import { ProfileType } from './profile.js';
 
 export enum MemberTypeId {
   BASIC = 'basic',
@@ -32,11 +34,17 @@ export const MemberTypeIdType = new GraphQLEnumType({
   },
 });
 
-export const MemberTypeType = new GraphQLObjectType<IMemberType, GraphQLContext>({
-  name: 'MemberType',
-  fields: () => ({
-    id: { type: new GraphQLNonNull(MemberTypeIdType) },
-    discount: { type: new GraphQLNonNull(GraphQLFloat) },
-    postsLimitPerMonth: { type: new GraphQLNonNull(GraphQLInt) },
-  }),
-});
+export const MemberTypeType: GraphQLObjectType<IMemberType, GraphQLContext> =
+  new GraphQLObjectType<IMemberType, GraphQLContext>({
+    name: 'MemberType',
+    fields: () => ({
+      id: { type: new GraphQLNonNull(MemberTypeIdType) },
+      discount: { type: new GraphQLNonNull(GraphQLFloat) },
+      postsLimitPerMonth: { type: new GraphQLNonNull(GraphQLInt) },
+      profiles: {
+        type: new GraphQLList(new GraphQLNonNull(ProfileType)),
+        resolve: (memberType, _, { prisma }) =>
+          prisma.profile.findMany({ where: { memberTypeId: memberType.id } }),
+      },
+    }),
+  });
