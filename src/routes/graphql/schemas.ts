@@ -13,6 +13,8 @@ import {
   ChangeUserMutation,
   CreateUserMutation,
   DeleteUserMutation,
+  SubscribeToMutation,
+  UnsubscribeFromMutation,
 } from './mutations/user.js';
 import {
   ChangeProfileMutation,
@@ -59,6 +61,8 @@ const mutation = new GraphQLObjectType({
     createUser: CreateUserMutation,
     changeUser: ChangeUserMutation,
     deleteUser: DeleteUserMutation,
+    subscribeTo: SubscribeToMutation,
+    unsubscribeFrom: UnsubscribeFromMutation,
     createPost: CreatePostMutation,
     changePost: ChangePostMutation,
     deletePost: DeletePostMutation,

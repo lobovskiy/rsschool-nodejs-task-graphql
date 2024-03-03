@@ -1,4 +1,4 @@
-import { GraphQLFieldConfig, GraphQLNonNull } from 'graphql';
+import { GraphQLFieldConfig, GraphQLNonNull, GraphQLScalarType } from 'graphql';
 import { GraphQLContext } from '../types/main.js';
 import { UUIDType } from '../types/uuid.js';
 import {
@@ -7,6 +7,7 @@ import {
   CreateUserArgs,
   CreateUserInputType,
   UserArgs,
+  UserSubscriptionArgs,
   UserType,
 } from '../types/user.js';
 
@@ -59,4 +60,47 @@ const DeleteUserMutation: GraphQLFieldConfig<undefined, GraphQLContext, UserArgs
   },
 };
 
-export { CreateUserMutation, ChangeUserMutation, DeleteUserMutation };
+const SubscribeToMutation: GraphQLFieldConfig<
+  undefined,
+  GraphQLContext,
+  UserSubscriptionArgs
+> = {
+  description: 'Subscribe user to another user',
+  type: UserType,
+  args: {
+    userId: { type: new GraphQLNonNull(UUIDType) },
+    authorId: { type: new GraphQLNonNull(UUIDType) },
+  },
+  resolve: (_, { userId, authorId }, { prisma }) => {
+    return prisma.user.update({
+      where: { id: userId },
+      data: { userSubscribedTo: { create: { authorId } } },
+    });
+  },
+};
+
+const UnsubscribeFromMutation: GraphQLFieldConfig<
+  undefined,
+  GraphQLContext,
+  UserSubscriptionArgs
+> = {
+  description: 'Unsubscribe user from another user',
+  type: new GraphQLScalarType({ name: 'UnsubscribeFromNullableReturnType' }),
+  args: {
+    userId: { type: new GraphQLNonNull(UUIDType) },
+    authorId: { type: new GraphQLNonNull(UUIDType) },
+  },
+  resolve: async (_, { userId, authorId }, { prisma }) => {
+    await prisma.subscribersOnAuthors.delete({
+      where: { subscriberId_authorId: { subscriberId: userId, authorId } },
+    });
+  },
+};
+
+export {
+  CreateUserMutation,
+  ChangeUserMutation,
+  DeleteUserMutation,
+  SubscribeToMutation,
+  UnsubscribeFromMutation,
+};

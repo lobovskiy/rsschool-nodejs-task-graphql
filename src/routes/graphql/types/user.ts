@@ -31,6 +31,10 @@ export type CreateUserArgs = {
 export type ChangeUserArgs = Pick<IUser, 'id'> & {
   dto: Partial<Pick<IUser, 'name' | 'balance'>>;
 };
+export type UserSubscriptionArgs = {
+  userId: Pick<IUser, 'id'>['id'];
+  authorId: Pick<IUser, 'id'>['id'];
+};
 
 export const UserType: GraphQLObjectType<IUser, GraphQLContext> = new GraphQLObjectType<
   IUser,
