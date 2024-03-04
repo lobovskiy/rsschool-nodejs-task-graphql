@@ -15,6 +15,10 @@ export class DataLoaders {
 
   public postsByAuthorIdBatchLoader: DataLoader<string, IPost[]>;
 
+  public userSubscriptionsByUserIdBatchLoader: DataLoader<string, IUser[]>;
+
+  public userSubscribersByUserIdBatchLoader: DataLoader<string, IUser[]>;
+
   public userBatchLoader: DataLoader<string, IUser>;
 
   constructor(private prisma: PrismaClient) {
@@ -24,6 +28,12 @@ export class DataLoaders {
     );
     this.profileByUserIdBatchLoader = new DataLoader(this.getProfileByUserId.bind(this));
     this.postsByAuthorIdBatchLoader = new DataLoader(this.getPostsByAuthorId.bind(this));
+    this.userSubscriptionsByUserIdBatchLoader = new DataLoader(
+      this.getUserSubscriptionsByUserId.bind(this),
+    );
+    this.userSubscribersByUserIdBatchLoader = new DataLoader(
+      this.getUserSubscribersByUserId.bind(this),
+    );
     this.userBatchLoader = new DataLoader(this.getUserById.bind(this));
   }
 
@@ -99,10 +109,53 @@ export class DataLoaders {
     return authorIds.map((authorId) => postsByAuthorId[authorId]);
   }
 
+  private async getUserSubscriptionsByUserId(userIds: readonly string[]) {
+    const users = await this.prisma.user.findMany({
+      where: { subscribedToUser: { some: { subscriberId: { in: [...userIds] } } } },
+      include: { subscribedToUser: { select: { subscriberId: true } } },
+    });
+
+    const userSubscriptionsByUserId = users.reduce(
+      (accUserSubscriptionsByUserId, { subscribedToUser, ...user }) => {
+        subscribedToUser.forEach(({ subscriberId }) => {
+          accUserSubscriptionsByUserId[subscriberId]
+            ? accUserSubscriptionsByUserId[subscriberId].push(user)
+            : (accUserSubscriptionsByUserId[subscriberId] = [user]);
+        });
+
+        return accUserSubscriptionsByUserId;
+      },
+      {} as Record<string, IUser[]>,
+    );
+
+    return userIds.map((userId) => userSubscriptionsByUserId[userId] || []);
+  }
+
+  private async getUserSubscribersByUserId(userIds: readonly string[]) {
+    const users = await this.prisma.user.findMany({
+      where: { userSubscribedTo: { some: { authorId: { in: [...userIds] } } } },
+      include: { userSubscribedTo: { select: { authorId: true } } },
+    });
+
+    const userSubscribersByUserId = users.reduce(
+      (accUserSubscribersByUserId, { userSubscribedTo, ...user }) => {
+        userSubscribedTo.forEach(({ authorId }) => {
+          accUserSubscribersByUserId[authorId]
+            ? accUserSubscribersByUserId[authorId].push(user)
+            : (accUserSubscribersByUserId[authorId] = [user]);
+        });
+
+        return accUserSubscribersByUserId;
+      },
+      {} as Record<string, IUser[]>,
+    );
+
+    return userIds.map((userId) => userSubscribersByUserId[userId] || []);
+  }
+
   private async getUserById(userIds: readonly string[]) {
     const users = await this.prisma.user.findMany({
       where: { id: { in: [...userIds] } },
-      include: { userSubscribedTo: true, subscribedToUser: true },
     });
 
     const usersById = users.reduce(

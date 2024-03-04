@@ -57,23 +57,13 @@ export const UserType: GraphQLObjectType<IUser, GraphQLContext> = new GraphQLObj
     },
     userSubscribedTo: {
       type: new GraphQLList(new GraphQLNonNull(UserType)),
-      resolve: (user, _, { dataLoaders: { userBatchLoader } }) => {
-        if (user.userSubscribedTo) {
-          return userBatchLoader.loadMany(
-            user.userSubscribedTo.map((subscription) => subscription.authorId),
-          );
-        }
-      },
+      resolve: (user, _, { dataLoaders: { userSubscriptionsByUserIdBatchLoader } }) =>
+        userSubscriptionsByUserIdBatchLoader.load(user.id),
     },
     subscribedToUser: {
       type: new GraphQLList(new GraphQLNonNull(UserType)),
-      resolve: (user, _, { dataLoaders: { userBatchLoader } }) => {
-        if (user.subscribedToUser) {
-          return userBatchLoader.loadMany(
-            user.subscribedToUser.map((subscription) => subscription.subscriberId),
-          );
-        }
-      },
+      resolve: (user, _, { dataLoaders: { userSubscribersByUserIdBatchLoader } }) =>
+        userSubscribersByUserIdBatchLoader.load(user.id),
     },
   }),
 });
