@@ -57,17 +57,23 @@ export const UserType: GraphQLObjectType<IUser, GraphQLContext> = new GraphQLObj
     },
     userSubscribedTo: {
       type: new GraphQLList(new GraphQLNonNull(UserType)),
-      resolve: (user, _, { prisma }) =>
-        prisma.user.findMany({
-          where: { subscribedToUser: { some: { subscriberId: user.id } } },
-        }),
+      resolve: (user, _, { dataLoaders: { userBatchLoader } }) => {
+        if (user.userSubscribedTo) {
+          return userBatchLoader.loadMany(
+            user.userSubscribedTo.map((subscription) => subscription.authorId),
+          );
+        }
+      },
     },
     subscribedToUser: {
       type: new GraphQLList(new GraphQLNonNull(UserType)),
-      resolve: (user, _, { prisma }) =>
-        prisma.user.findMany({
-          where: { userSubscribedTo: { some: { authorId: user.id } } },
-        }),
+      resolve: (user, _, { dataLoaders: { userBatchLoader } }) => {
+        if (user.subscribedToUser) {
+          return userBatchLoader.loadMany(
+            user.subscribedToUser.map((subscription) => subscription.subscriberId),
+          );
+        }
+      },
     },
   }),
 });

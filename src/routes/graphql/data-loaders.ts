@@ -4,6 +4,7 @@ import { MemberTypeId } from './types/member-type-id.js';
 import { IPost } from './types/post.js';
 import { IMemberType } from './types/member-type.js';
 import { IProfile } from './types/profile.js';
+import { IUser } from './types/user.js';
 
 export class DataLoaders {
   public memberTypeBatchLoader: DataLoader<MemberTypeId, IMemberType>;
@@ -14,6 +15,8 @@ export class DataLoaders {
 
   public postsByAuthorIdBatchLoader: DataLoader<string, IPost[]>;
 
+  public userBatchLoader: DataLoader<string, IUser>;
+
   constructor(private prisma: PrismaClient) {
     this.memberTypeBatchLoader = new DataLoader(this.getMemberTypeById.bind(this));
     this.profilesByMemberTypeIdBatchLoader = new DataLoader(
@@ -21,6 +24,7 @@ export class DataLoaders {
     );
     this.profileByUserIdBatchLoader = new DataLoader(this.getProfileByUserId.bind(this));
     this.postsByAuthorIdBatchLoader = new DataLoader(this.getPostsByAuthorId.bind(this));
+    this.userBatchLoader = new DataLoader(this.getUserById.bind(this));
   }
 
   private async getMemberTypeById(memberTypeIds: readonly MemberTypeId[]) {
@@ -93,5 +97,22 @@ export class DataLoaders {
     );
 
     return authorIds.map((authorId) => postsByAuthorId[authorId]);
+  }
+
+  private async getUserById(userIds: readonly string[]) {
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: [...userIds] } },
+      include: { userSubscribedTo: true, subscribedToUser: true },
+    });
+
+    const usersById = users.reduce(
+      (accUsersById, user) => {
+        accUsersById[user.id] = user;
+        return accUsersById;
+      },
+      {} as Record<string, IUser>,
+    );
+
+    return userIds.map((userId) => usersById[userId]);
   }
 }
