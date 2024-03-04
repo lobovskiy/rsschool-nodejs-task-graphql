@@ -47,13 +47,13 @@ export const UserType: GraphQLObjectType<IUser, GraphQLContext> = new GraphQLObj
     balance: { type: new GraphQLNonNull(GraphQLFloat) },
     profile: {
       type: ProfileType,
-      resolve: (user, _, { prisma }) =>
-        prisma.profile.findUnique({ where: { userId: user.id } }),
+      resolve: (user, _, { dataLoaders: { profileByUserIdBatchLoader } }) =>
+        profileByUserIdBatchLoader.load(user.id),
     },
     posts: {
       type: new GraphQLList(new GraphQLNonNull(PostType)),
-      resolve: (user, _, { prisma }) =>
-        prisma.post.findMany({ where: { authorId: user.id } }),
+      resolve: async (user, _, { dataLoaders: { postsByAuthorIdBatchLoader } }) =>
+        postsByAuthorIdBatchLoader.load(user.id),
     },
     userSubscribedTo: {
       type: new GraphQLList(new GraphQLNonNull(UserType)),

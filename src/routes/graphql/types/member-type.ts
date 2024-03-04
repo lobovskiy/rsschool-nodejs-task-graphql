@@ -26,8 +26,11 @@ export const MemberTypeType: GraphQLObjectType<IMemberType, GraphQLContext> =
       postsLimitPerMonth: { type: new GraphQLNonNull(GraphQLInt) },
       profiles: {
         type: new GraphQLList(new GraphQLNonNull(ProfileType)),
-        resolve: (memberType, _, { prisma }) =>
-          prisma.profile.findMany({ where: { memberTypeId: memberType.id } }),
+        resolve: (
+          memberType,
+          _,
+          { dataLoaders: { profilesByMemberTypeIdBatchLoader } },
+        ) => profilesByMemberTypeIdBatchLoader.load(memberType.id),
       },
     }),
   });

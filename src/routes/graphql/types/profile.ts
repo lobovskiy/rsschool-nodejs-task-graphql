@@ -9,14 +9,14 @@ import { GraphQLContext } from './main.js';
 import { UUIDType } from './uuid.js';
 import { MemberTypeType } from './member-type.js';
 import { UserType } from './user.js';
-import { MemberTypeIdType } from './member-type-id.js';
+import { MemberTypeId, MemberTypeIdType } from './member-type-id.js';
 
 export interface IProfile {
   id: string;
   isMale: boolean;
   yearOfBirth: number;
   userId: string;
-  memberTypeId: string;
+  memberTypeId: MemberTypeId;
 }
 
 export type ProfileArgs = Pick<IProfile, 'id'>;
@@ -40,8 +40,8 @@ export const ProfileType = new GraphQLObjectType<IProfile, GraphQLContext>({
     },
     memberType: {
       type: new GraphQLNonNull(MemberTypeType),
-      resolve: (profile, _, { prisma }) =>
-        prisma.memberType.findUnique({ where: { id: profile.memberTypeId } }),
+      resolve: (profile, _, { dataLoaders: { memberTypeBatchLoader } }) =>
+        memberTypeBatchLoader.load(profile.memberTypeId),
     },
   }),
 });
