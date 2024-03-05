@@ -1,0 +1,66 @@
+import {
+  GraphQLBoolean,
+  GraphQLInputObjectType,
+  GraphQLInt,
+  GraphQLNonNull,
+  GraphQLObjectType,
+} from 'graphql';
+import { GraphQLContext } from './main.js';
+import { UUIDType } from './uuid.js';
+import { MemberTypeType } from './member-type.js';
+import { UserType } from './user.js';
+import { MemberTypeId, MemberTypeIdType } from './member-type-id.js';
+
+export interface IProfile {
+  id: string;
+  isMale: boolean;
+  yearOfBirth: number;
+  userId: string;
+  memberTypeId: MemberTypeId;
+}
+
+export type ProfileArgs = Pick<IProfile, 'id'>;
+export type CreateProfileArgs = {
+  dto: Pick<IProfile, 'userId' | 'memberTypeId' | 'isMale' | 'yearOfBirth'>;
+};
+export type ChangeProfileArgs = Pick<IProfile, 'id'> & {
+  dto: Pick<IProfile, 'userId' | 'memberTypeId' | 'isMale' | 'yearOfBirth'>;
+};
+
+export const ProfileType = new GraphQLObjectType<IProfile, GraphQLContext>({
+  name: 'Profile',
+  fields: () => ({
+    id: { type: new GraphQLNonNull(UUIDType) },
+    isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
+    yearOfBirth: { type: new GraphQLNonNull(GraphQLInt) },
+    user: {
+      type: new GraphQLNonNull(UserType),
+      resolve: (profile, _, { prisma }) =>
+        prisma.user.findUnique({ where: { id: profile.userId } }),
+    },
+    memberType: {
+      type: new GraphQLNonNull(MemberTypeType),
+      resolve: (profile, _, { dataLoaders: { memberTypeBatchLoader } }) =>
+        memberTypeBatchLoader.load(profile.memberTypeId),
+    },
+  }),
+});
+
+export const CreateProfileInputType = new GraphQLInputObjectType({
+  name: 'CreateProfileInput',
+  fields: {
+    userId: { type: new GraphQLNonNull(UUIDType) },
+    memberTypeId: { type: new GraphQLNonNull(MemberTypeIdType) },
+    isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
+    yearOfBirth: { type: new GraphQLNonNull(GraphQLInt) },
+  },
+});
+
+export const ChangeProfileInputType = new GraphQLInputObjectType({
+  name: 'ChangeProfileInput',
+  fields: {
+    memberTypeId: { type: MemberTypeIdType },
+    isMale: { type: GraphQLBoolean },
+    yearOfBirth: { type: GraphQLInt },
+  },
+});
